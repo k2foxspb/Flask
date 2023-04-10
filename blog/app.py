@@ -38,3 +38,20 @@ and pass `code` in JSON body / FormData
     if request.json and "code" in request.json:
         return "code from json", request.json["code"]
     return "", 204
+
+
+@app.before_request
+def process_before_request():
+    """Sets start_time to `g` object"""
+    g.start_time = time()
+
+
+@app.after_request
+def process_after_request(response):
+    """
+    adds process time in headers
+    """
+    if hasattr(g, 'start_time'):
+        response.headers['process_time'] = time() - g.start_time
+
+    return response
